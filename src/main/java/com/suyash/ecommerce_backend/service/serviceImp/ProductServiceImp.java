@@ -35,16 +35,16 @@ public class ProductServiceImp implements ProductService {
     @Override
     public Product updateProduct(Long id, Product product) {
 
-        Product existing = productRepository.findById(id)
+        Product product1 = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        existing.setName(product.getName());
-        existing.setDescription(product.getDescription());
-        existing.setPrice(product.getPrice());
-        existing.setStock(product.getStock());
-        existing.setImageUrl(product.getImageUrl());
+        product1.setName(product.getName());
+        product1.setDescription(product.getDescription());
+        product1.setPrice(product.getPrice());
+        product1.setStock(product.getStock());
+        product1.setImageUrl(product.getImageUrl());
 
-        return productRepository.save(existing);
+        return productRepository.save(product1);
     }
 
     @Override

@@ -45,10 +45,4 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return "Category Deleted Successfully";
     }
-
-    @DeleteMapping
-    public String deleteCategory() {
-        categoryService.deleteCategory();
-        return "Category Deleted Successfully";
-    }
 }

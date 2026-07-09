@@ -51,9 +51,4 @@ public class CategoryServiceImp implements CategoryService {
 
         categoryRepository.delete(category);
     }
-
-    @Override
-    public void deleteCategory() {
-        categoryRepository.deleteAll();
-    }
 }

@@ -1,4 +1,4 @@
-package com.suyash.ecommerce_backend.service;
+package com.suyash.ecommerce_backend.serviceImp;
 
 import com.suyash.ecommerce_backend.dto.AuthResponse;
 import com.suyash.ecommerce_backend.dto.LoginRequest;

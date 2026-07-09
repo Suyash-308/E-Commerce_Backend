@@ -3,7 +3,7 @@ package com.suyash.ecommerce_backend.controller;
 import com.suyash.ecommerce_backend.dto.AuthResponse;
 import com.suyash.ecommerce_backend.dto.LoginRequest;
 import com.suyash.ecommerce_backend.dto.RegisterRequest;
-import com.suyash.ecommerce_backend.service.AuthService;
+import com.suyash.ecommerce_backend.serviceImp.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

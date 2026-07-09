@@ -1,4 +1,4 @@
-package com.suyash.ecommerce_backend.service.serviceImp;
+package com.suyash.ecommerce_backend.serviceImp;
 
 import com.suyash.ecommerce_backend.entity.Category;
 import com.suyash.ecommerce_backend.repository.CategoryRepository;

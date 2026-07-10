@@ -1,8 +1,10 @@
 package com.suyash.ecommerce_backend.entity;
 
+import com.suyash.ecommerce_backend.enumPackage.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 
 
 @Entity
@@ -27,4 +29,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> addresses;
 }

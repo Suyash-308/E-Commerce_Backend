@@ -1,7 +1,7 @@
 package com.suyash.ecommerce_backend.serviceImp;
 
 import com.suyash.ecommerce_backend.entity.Order;
-import com.suyash.ecommerce_backend.entity.OrderStatus;
+import com.suyash.ecommerce_backend.enumPackage.OrderStatus;
 import com.suyash.ecommerce_backend.repository.OrderRepository;
 import com.suyash.ecommerce_backend.service.OrderService;
 import lombok.RequiredArgsConstructor;

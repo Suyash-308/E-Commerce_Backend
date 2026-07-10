@@ -1,5 +1,6 @@
 package com.suyash.ecommerce_backend.entity;
 
+import com.suyash.ecommerce_backend.enumPackage.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

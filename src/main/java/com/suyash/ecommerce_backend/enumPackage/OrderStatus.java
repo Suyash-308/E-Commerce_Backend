@@ -1,4 +1,4 @@
-package com.suyash.ecommerce_backend.entity;
+package com.suyash.ecommerce_backend.enumPackage;
 
 public enum OrderStatus {
 

@@ -3,7 +3,7 @@ package com.suyash.ecommerce_backend.serviceImp;
 import com.suyash.ecommerce_backend.dto.AuthResponse;
 import com.suyash.ecommerce_backend.dto.LoginRequest;
 import com.suyash.ecommerce_backend.dto.RegisterRequest;
-import com.suyash.ecommerce_backend.entity.Role;
+import com.suyash.ecommerce_backend.enumPackage.Role;
 import com.suyash.ecommerce_backend.entity.User;
 import com.suyash.ecommerce_backend.repository.UserRepository;
 import com.suyash.ecommerce_backend.security.JwtService;

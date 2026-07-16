@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,22 @@ public class CartServiceImp implements CartService {
 
     @Override
     public Cart addToCart(Cart cart) {
+
+        Optional<Cart> existingCart =
+                cartRepository.findByUserAndProduct(
+                        cart.getUser(),
+                        cart.getProduct()
+                );
+
+        if (existingCart.isPresent()) {
+
+            Cart existing = existingCart.get();
+
+            existing.setQuantity(existing.getQuantity() + cart.getQuantity());
+
+            return cartRepository.save(existing);
+        }
+
         return cartRepository.save(cart);
     }
 
@@ -34,7 +51,8 @@ public class CartServiceImp implements CartService {
     public Cart updateCart(Long id, Cart cart) {
 
         Cart existing = cartRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cart Item Not Found"));
+                .orElseThrow(() ->
+                        new RuntimeException("Cart Item Not Found"));
 
         existing.setQuantity(cart.getQuantity());
 

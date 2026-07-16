@@ -1,10 +1,16 @@
 package com.suyash.ecommerce_backend.serviceImp;
 
+import com.suyash.ecommerce_backend.entity.Cart;
 import com.suyash.ecommerce_backend.entity.Order;
+import com.suyash.ecommerce_backend.entity.User;
 import com.suyash.ecommerce_backend.enumPackage.OrderStatus;
+import com.suyash.ecommerce_backend.repository.CartRepository;
 import com.suyash.ecommerce_backend.repository.OrderRepository;
+import com.suyash.ecommerce_backend.repository.UserRepository;
 import com.suyash.ecommerce_backend.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,54 +21,55 @@ import java.util.List;
 public class OrderServiceImp implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final CartRepository cartRepository;
 
     @Override
-    public Order placeOrder(Order order) {
+    public void placeOrder() {
 
-        // Automatically set order date
-        order.setOrderDate(LocalDateTime.now());
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
-        // Default status
-        if (order.getStatus() == null) {
-            order.setStatus(OrderStatus.PENDING);
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        List<Cart> cartItems = cartRepository.findByUser(user);
+
+        if (cartItems.isEmpty()) {
+            throw new RuntimeException("Cart is Empty");
         }
 
-        return orderRepository.save(order);
+        for (Cart cart : cartItems) {
+
+            Order order = Order.builder()
+                    .user(user)
+                    .product(cart.getProduct())
+                    .quantity(cart.getQuantity())
+                    .totalPrice(cart.getProduct().getPrice() * cart.getQuantity())
+                    .status(OrderStatus.PENDING)
+                    .orderDate(LocalDateTime.now())
+                    .build();
+
+            orderRepository.save(order);
+        }
+
+        cartRepository.deleteAll(cartItems);
     }
 
     @Override
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
+    public List<Order> getMyOrders() {
 
-    @Override
-    public Order getOrderById(Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-    }
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
-    @Override
-    public Order updateOrder(Long id, Order order) {
+        String email = authentication.getName();
 
-        Order existingOrder = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
 
-        existingOrder.setUser(order.getUser());
-        existingOrder.setProduct(order.getProduct());
-        existingOrder.setQuantity(order.getQuantity());
-        existingOrder.setTotalPrice(order.getTotalPrice());
-        existingOrder.setStatus(order.getStatus());
-
-        return orderRepository.save(existingOrder);
-    }
-
-    @Override
-    public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
-    }
-
-    @Override
-    public void deleteAllOrders() {
-        orderRepository.deleteAll();
+        return orderRepository.findByUser(user);
     }
 }
+

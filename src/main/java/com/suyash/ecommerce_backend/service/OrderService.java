@@ -5,16 +5,7 @@ import com.suyash.ecommerce_backend.entity.Order;
 import java.util.List;
 
 public interface OrderService {
+    void placeOrder();
 
-    Order placeOrder(Order order);
-
-    List<Order> getAllOrders();
-
-    Order getOrderById(Long id);
-
-    Order updateOrder(Long id, Order order);
-
-    void deleteOrder(Long id);
-
-    void deleteAllOrders();
+    List<Order> getMyOrders();
 }

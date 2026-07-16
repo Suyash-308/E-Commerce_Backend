@@ -19,7 +19,7 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final CustomUserDetailsService service;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -28,43 +28,57 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        try {
 
-        if(authHeader==null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
-            return;
-        }
+            String authHeader = request.getHeader("Authorization");
 
-        String token = authHeader.substring(7);
+            System.out.println("Authorization Header = " + authHeader);
 
-        String email = jwtService.extractEmail(token);
-
-        if(email!=null &&
-                SecurityContextHolder.getContext()
-                        .getAuthentication()==null){
-
-            UserDetails userDetails =
-                    service.loadUserByUsername(email);
-
-            if(jwtService.isTokenValid(token,
-                    userDetails.getUsername())){
-
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
-
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request));
-
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authToken);
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
             }
+
+            String token = authHeader.substring(7);
+
+            String email = jwtService.extractEmail(token);
+
+            System.out.println("Email = " + email);
+            System.out.println("Authorization Header = " + authHeader);
+
+            System.out.println("Authentication = " + SecurityContextHolder.getContext().getAuthentication());
+            if (email != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(email);
+
+                if (jwtService.isTokenValid(token, userDetails.getUsername())) {
+
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities());
+
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request));
+
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(authToken);
+
+                    System.out.println("JWT Login Success");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
+
 
     }
+
 }

@@ -6,6 +6,8 @@ import com.suyash.ecommerce_backend.repository.AddressRepository;
 import com.suyash.ecommerce_backend.repository.UserRepository;
 import com.suyash.ecommerce_backend.service.AddressService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +22,14 @@ public class AddressServiceImp implements AddressService {
 
 
     @Override
-    public Address addAddress(Long userId, Address address) {
+    public Address addAddress(Address address) {
 
-        User user = userRepository.findById(userId)
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
 
         address.setUser(user);

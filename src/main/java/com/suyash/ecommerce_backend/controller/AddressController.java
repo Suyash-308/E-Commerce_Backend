@@ -1,8 +1,11 @@
 package com.suyash.ecommerce_backend.controller;
 
 import com.suyash.ecommerce_backend.entity.Address;
+import com.suyash.ecommerce_backend.entity.User;
 import com.suyash.ecommerce_backend.service.AddressService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,11 +16,10 @@ import java.util.List;
 public class AddressController {
     private final AddressService addressService;
 
-    @PostMapping
-    public Address addAddress(@RequestParam Long userId,
-                              @RequestBody Address address) {
 
-        return addressService.addAddress(userId, address);
+    @PostMapping
+    public Address addAddress(@RequestBody Address address) {
+        return addressService.addAddress(address);
     }
 
     @GetMapping

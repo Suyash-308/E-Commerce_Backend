@@ -33,10 +33,15 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public APIs
                         .requestMatchers(
                                 "/auth/**",
                                 "/products/**",
@@ -44,11 +49,17 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
+
+                        // All other APIs require JWT
                         .anyRequest().authenticated()
                 )
+
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -58,8 +69,13 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:*"));
+        // Allow Local Frontend + Vercel Frontend
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "https://*.vercel.app"
+        ));
 
+        // Allowed HTTP Methods
         configuration.setAllowedMethods(List.of(
                 "GET",
                 "POST",
@@ -68,14 +84,19 @@ public class SecurityConfig {
                 "OPTIONS"
         ));
 
+        // Allow all request headers
         configuration.setAllowedHeaders(List.of("*"));
 
+        // Allow cookies/credentials
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
 
         return source;
     }
@@ -87,7 +108,10 @@ public class SecurityConfig {
                 new DaoAuthenticationProvider();
 
         provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
+
+        provider.setPasswordEncoder(
+                passwordEncoder()
+        );
 
         return provider;
     }
